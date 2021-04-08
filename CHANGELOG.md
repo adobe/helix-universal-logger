@@ -1,3 +1,15 @@
+# 1.0.0 (2021-04-08)
+
+
+### Bug Fixes
+
+* **rel:** use correct release.js ([dc923d1](https://github.com/adobe/helix-universal-logger/commit/dc923d1bb8649f60df2963e902363fbbf9339442))
+
+
+### Features
+
+* **logger:** implement the thing ([#1](https://github.com/adobe/helix-universal-logger/issues/1)) ([f146c84](https://github.com/adobe/helix-universal-logger/commit/f146c84a9e5d9448cc7bb3066616b1d8fc49d2ef))
+
 ## [1.4.6](https://github.com/adobe/helix-library/compare/v1.4.5...v1.4.6) (2021-03-02)
 
 
