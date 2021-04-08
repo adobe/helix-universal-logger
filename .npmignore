@@ -1,5 +1,6 @@
 coverage
 .nyc_output/
+.github/
 node_modules/
 junit
 .idea
@@ -13,3 +14,7 @@ snykmocha.js
 .releaserc.js
 .eslintignore
 .eslintrc.js
+.circleci/
+.renovaterc.json
+.tidelift.yml
+.jsdoc.json
