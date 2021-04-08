@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/adobe/helix-universal-logger/compare/v1.0.0...v1.0.1) (2021-04-08)
+
+
+### Bug Fixes
+
+* **npm:** remove unused files from release ([5715be2](https://github.com/adobe/helix-universal-logger/commit/5715be2839a189fe01cf7de0d67a5beb28606ab6))
+
 # 1.0.0 (2021-04-08)
 
 
