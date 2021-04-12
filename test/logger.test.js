@@ -16,7 +16,7 @@
 const assert = require('assert');
 const nock = require('nock');
 const { MultiLogger, MemLogger } = require('@adobe/helix-log');
-const { wrap } = require('@adobe/openwhisk-action-utils');
+const { wrap } = require('@adobe/helix-shared');
 const { Request } = require('@adobe/helix-fetch');
 const logger = require('../src/logger.js');
 
