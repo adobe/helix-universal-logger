@@ -4,6 +4,14 @@
 ### Bug Fixes
 
 * **deps:** update adobe fixes ([307330e](https://github.com/adobe/helix-universal-logger/commit/307330e661b2a9e1d67f7ddfc7817e7a361a1c64))
+* **deps:** use helix-shared ([#4](https://github.com/adobe/helix-universal-logger/issues/4)) ([adaeccf](https://github.com/adobe/helix-universal-logger/commit/adaeccf66b6ea13f8234010dc5cee355c41c59fa))
+
+## [1.0.2](https://github.com/adobe/helix-universal-logger/compare/v1.0.1...v1.0.2) (2021-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([307330e](https://github.com/adobe/helix-universal-logger/commit/307330e661b2a9e1d67f7ddfc7817e7a361a1c64))
 
 ## [1.0.1](https://github.com/adobe/helix-universal-logger/compare/v1.0.0...v1.0.1) (2021-04-08)
 
