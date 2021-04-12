@@ -23,7 +23,7 @@
   "homepage": "https://github.com/adobe/helix-universal-logger#readme",
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
-    "@adobe/openwhisk-action-utils": "4.4.3",
+    "@adobe/openwhisk-action-utils": "4.4.4",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@semantic-release/npm": "7.1.1",
@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "@adobe/helix-fetch": "2.2.0",
-    "@adobe/helix-log": "5.0.2",
+    "@adobe/helix-log": "5.0.3",
     "cls-hooked": "4.2.2"
   }
 }
