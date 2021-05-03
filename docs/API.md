@@ -6,7 +6,7 @@ Wrap function that returns an Universal function that is enabled with logging.
 **Usage:**
 
 ```js
-const { wrap } = require('@adobe/openwhisk-action-utils');
+const wrap = require('@adobe/helix-shared-wrap');
 const { logger } = require('@adobe/helix-universal-logger');
 
 async function main(req, context) {
@@ -89,7 +89,7 @@ Wrap function that returns an universal function that is enabled with logging.
 **Example**  
 
 ```js
-const { wrap } = require('@adobe/openwhisk-action-utils');
+const wrap = require('@adobe/helix-shared-wrap');
 const { logger } = require('@adobe/helix-universal-logger');
 
 async function main(req, context) {

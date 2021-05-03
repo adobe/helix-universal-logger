@@ -17,7 +17,7 @@
  * **Usage:**
  *
  * ```js
- * const { wrap } = require('@adobe/helix-shared');
+ * const wrap = require('@adobe/helix-shared-wrap');
  * const { logger } = require('@adobe/helix-universal-logger');
  *
  * async function main(req, context) {
@@ -283,7 +283,7 @@ function trace(fn) {
  * @example <caption></caption>
  *
  * ```js
- * const { wrap } = require('@adobe/helix-shared');
+ * const wrap = require('@adobe/helix-shared-wrap');
  * const { logger } = require('@adobe/helix-universal-logger');
  *
  * async function main(req, context) {
