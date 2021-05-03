@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/adobe/helix-universal-logger/compare/v1.0.2...v1.0.3) (2021-05-03)
+
+
+### Bug Fixes
+
+* **deps:** use helix shared modules ([90a039c](https://github.com/adobe/helix-universal-logger/commit/90a039cbde4648a18a9aabd0f2af5c8e0ade1eb6))
+
 ## [1.0.2](https://github.com/adobe/helix-universal-logger/compare/v1.0.1...v1.0.2) (2021-04-12)
 
 
