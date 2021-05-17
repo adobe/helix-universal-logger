@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/adobe/helix-universal-logger/compare/v1.0.3...v1.0.4) (2021-05-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.2.1 ([ca425a7](https://github.com/adobe/helix-universal-logger/commit/ca425a78af87111f3ec842c9abe0c85e7365e1bc))
+
 ## [1.0.3](https://github.com/adobe/helix-universal-logger/compare/v1.0.2...v1.0.3) (2021-05-03)
 
 
