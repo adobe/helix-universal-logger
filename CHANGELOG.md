@@ -1,3 +1,10 @@
+## [1.0.9](https://github.com/adobe/helix-universal-logger/compare/v1.0.8...v1.0.9) (2021-09-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v5.0.5 ([#48](https://github.com/adobe/helix-universal-logger/issues/48)) ([825ab1a](https://github.com/adobe/helix-universal-logger/commit/825ab1a9580325061ba33b84e6f5e4854e925820))
+
 ## [1.0.8](https://github.com/adobe/helix-universal-logger/compare/v1.0.7...v1.0.8) (2021-09-02)
 
 
