@@ -10,3 +10,24 @@
  * governing permissions and limitations under the License.
  */
 export * from './logger';
+
+declare module '@adobe/helix-universal' {
+  interface Logger {
+    info: (...msgs: any[]) => void;
+    error: (...msgs: any[]) => void;
+    warn: (...msgs: any[]) => void;
+    log: (...msg: any[]) => void;
+    fatal: (...msg: any[]) => void;
+    verbose: (...msg: any[]) => void;
+    debug: (...msg: any[]) => void;
+    trace: (...msg: any[]) => void;
+    silly: (...msg: any[]) => void;
+  }
+
+  namespace HelixUniversal {
+    // Extend context
+    export interface UniversalContext {
+      log: Logger;
+    }
+  }
+}
