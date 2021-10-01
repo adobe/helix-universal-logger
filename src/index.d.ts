@@ -24,7 +24,7 @@ declare module '@adobe/helix-universal' {
     silly: (...msg: any[]) => void;
   }
 
-  namespace HelixUniversal {
+  namespace Helix {
     // Extend context
     export interface UniversalContext {
       log: Logger;
