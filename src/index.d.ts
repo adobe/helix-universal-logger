@@ -10,3 +10,11 @@
  * governing permissions and limitations under the License.
  */
 export * from './logger';
+import { UniversalContext as _UniversalContext } from './logger';
+
+declare module '@adobe/helix-universal' {
+  namespace Helix {
+    export interface UniversalContext extends _UniversalContext {
+    }
+  }
+}

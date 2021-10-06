@@ -22,10 +22,28 @@ export declare class Request {}
  */
 export declare class Response {}
 
+
 /**
- * Universal context
+ * Logger object exposed through context
  */
-export declare interface UniversalContext {}
+interface Logger {
+  info: (...msgs: any[]) => void;
+  error: (...msgs: any[]) => void;
+  warn: (...msgs: any[]) => void;
+  log: (...msg: any[]) => void;
+  fatal: (...msg: any[]) => void;
+  verbose: (...msg: any[]) => void;
+  debug: (...msg: any[]) => void;
+  trace: (...msg: any[]) => void;
+  silly: (...msg: any[]) => void;
+}
+ 
+/**
+ * Universal context extension
+ */
+export declare interface UniversalContext {
+  log: Logger;
+}
 
 /**
  * Helix Universal Function
