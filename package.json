@@ -54,7 +54,7 @@
     }
   },
   "dependencies": {
-    "@adobe/helix-fetch": "2.4.2",
+    "@adobe/helix-fetch": "3.0.0",
     "@adobe/helix-log": "5.0.5",
     "cls-hooked": "4.2.2"
   }
