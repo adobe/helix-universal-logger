@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/adobe/helix-universal-logger/compare/v1.1.0...v1.1.1) (2021-10-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency eslint to v8 ([#55](https://github.com/adobe/helix-universal-logger/issues/55)) ([fd88a57](https://github.com/adobe/helix-universal-logger/commit/fd88a57962152831267dd6a8a20b9520a9bf7651))
+
 # [1.1.0](https://github.com/adobe/helix-universal-logger/compare/v1.0.9...v1.1.0) (2021-10-06)
 
 
