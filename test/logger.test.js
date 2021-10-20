@@ -15,14 +15,16 @@
 
 const assert = require('assert');
 const nock = require('nock');
-const { MultiLogger, MemLogger } = require('@adobe/helix-log');
+const { SimpleInterface, MemLogger } = require('@adobe/helix-log');
 const wrap = require('@adobe/helix-shared-wrap');
 const { Request } = require('@adobe/helix-fetch');
 const logger = require('../src/logger.js');
+const coralogix = require('../src/logger-coralogix.js');
 
 const DEFAULT_CONTEXT = {
   env: {},
   func: {
+    app: 'helix',
     name: 'test-my-action-name',
     version: '1.2.3',
     package: 'test-package',
@@ -35,7 +37,6 @@ const DEFAULT_CONTEXT = {
 };
 
 describe('Loggers', () => {
-  let myRootLogger;
   let memLogger;
 
   beforeEach(() => {
@@ -46,30 +47,36 @@ describe('Loggers', () => {
         timestamp: '1970-01-01T00:00:00.000Z',
       }),
     });
-    myRootLogger = new MultiLogger({});
     nock.disableNetConnect();
   });
 
   afterEach(() => {
     nock.cleanAll();
     nock.enableNetConnect();
+    coralogix.reset();
   });
 
-  it('init does not fail if __ow_logger is not a bunyan logger.', () => {
-    logger.init({
-      __ow_logger: 42,
-    }, myRootLogger);
+  function recordDefault(fn) {
+    return (req, context) => {
+      context.log.logger.loggers.set('default', memLogger);
+      return fn(req, context);
+    };
+  }
 
-    logger.init({
-      __ow_logger: {},
-    }, myRootLogger);
-  });
+  function recordUniversal(fn) {
+    return (req, context) => {
+      context.log.logger.loggers.get('UniversalLogger').loggers.set('default', memLogger);
+      return fn(req, context);
+    };
+  }
 
-  it('init sets up openwhisk logging and keeps default unaffected', () => {
-    const log = logger.init({}, myRootLogger);
-    myRootLogger.loggers.set('default', memLogger);
+  it('sets up universal logging and keeps default unaffected', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.info('Hello, world');
+    };
 
-    log.info('Hello, world');
+    await logger(recordDefault(main), {})(new Request('https://localhost:8000'), {});
     assert.deepEqual(memLogger.buf, [{
       level: 'info',
       message: ['Hello, world'],
@@ -77,47 +84,81 @@ describe('Loggers', () => {
     }]);
   });
 
-  it('init uses info as default log-level', () => {
-    const log = logger.init({}, myRootLogger);
-    myRootLogger.loggers.set('default', memLogger);
-
-    log.debug('Hello, world');
-    log.info('Hello, world');
-    log.warn('Hello, world');
-    assert.equal(memLogger.buf.map((r) => (r.level)).join(), 'info,warn');
-  });
-
-  it('init takes log level argument', () => {
-    const log = logger.init({}, myRootLogger, 'debug');
-    myRootLogger.loggers.set('default', memLogger);
-
-    log.debug('Hello, world');
-    log.info('Hello, world');
-    log.warn('Hello, world');
-    assert.equal(memLogger.buf.map((r) => (r.level)).join(), 'debug,info,warn');
-  });
-
-  it('init uses LOG_LEVEL param', () => {
-    const log = logger.init({ env: { LOG_LEVEL: 'debug' } }, myRootLogger);
-    myRootLogger.loggers.set('default', memLogger);
-
-    log.debug('Hello, world');
-    log.info('Hello, world');
-    log.warn('Hello, world');
-    assert.equal(memLogger.buf.map((r) => (r.level)).join(), 'debug,info,warn');
-  });
-
-  it('logging adds invocation fields with defaults', () => {
-    const log = logger.init({}, myRootLogger);
-    myRootLogger.loggers.get('UniversalLogger').loggers.set('mylogger', memLogger);
-
-    logger(() => {
+  it('does not create new interface', async () => {
+    const main = (req, context) => {
+      const { log } = context;
       log.info('Hello, world');
-    })({}, {});
+    };
 
+    const log = new SimpleInterface({
+      logger: memLogger,
+    });
+
+    const context = {
+      log,
+    };
+    await logger(recordDefault(main), {})(new Request('https://localhost:8000'), context);
+    assert.strictEqual(context.log, log);
     assert.deepEqual(memLogger.buf, [{
       level: 'info',
       message: ['Hello, world'],
+      timestamp: '1970-01-01T00:00:00.000Z',
+    }]);
+  });
+
+  it('uses info as default log-level', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.debug('Hello, world');
+      log.info('Hello, world');
+      log.warn('Hello, world');
+    };
+
+    await logger(recordDefault(main), {})(new Request('https://localhost:8000'), {});
+    assert.equal(memLogger.buf.map((r) => (r.level)).join(), 'info,warn');
+  });
+
+  it('takes log level argument', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.debug('Hello, world');
+      log.info('Hello, world');
+      log.warn('Hello, world');
+    };
+
+    await logger(recordDefault(main), { level: 'debug' })(new Request('https://localhost:8000'), {});
+    assert.equal(memLogger.buf.map((r) => (r.level)).join(), 'debug,info,warn');
+  });
+
+  it('init uses LOG_LEVEL param', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.debug('Hello, world');
+      log.info('Hello, world');
+      log.warn('Hello, world');
+    };
+
+    await logger(recordDefault(main))(new Request('https://localhost:8000'), { env: { LOG_LEVEL: 'debug' } });
+    assert.equal(memLogger.buf.map((r) => (r.level)).join(), 'debug,info,warn');
+  });
+
+  it('logging adds invocation fields with defaults', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.info('Hello, world');
+    };
+
+    await logger(recordUniversal(main), {})(new Request('https://localhost:8000', {
+      headers: {
+        'x-cdn-url': 'https://www.adobe.com',
+      },
+    }), {});
+    assert.deepEqual(memLogger.buf, [{
+      level: 'info',
+      message: ['Hello, world'],
+      cdn: {
+        url: 'https://www.adobe.com',
+      },
       inv: {
         functionName: '/undefined/undefined/undefined',
         invocationId: 'n/a',
@@ -128,36 +169,21 @@ describe('Loggers', () => {
     }]);
   });
 
-  it('log methods are bound to logger', () => {
-    const context = {};
-    logger.init(context, myRootLogger);
-    myRootLogger.loggers.get('UniversalLogger').loggers.set('mylogger', memLogger);
+  it('log methods are bound to logger', async () => {
+    const main = (req, context) => {
+      const { log: { info } } = context;
+      info('Hello, world');
+    };
 
-    const { info } = context.log;
-    info('Hello, world');
-    assert.deepEqual(memLogger.buf, [{
-      level: 'info',
-      message: ['Hello, world'],
-      timestamp: '1970-01-01T00:00:00.000Z',
-    }]);
-  });
-
-  it('universal logging adds inv fields', () => {
-    const log = logger.init({}, myRootLogger);
-    myRootLogger.loggers.get('UniversalLogger').loggers.set('mylogger', memLogger);
-
-    logger(() => {
-      log.info('Hello, world');
-    })([], { ...DEFAULT_CONTEXT });
-
+    await logger(recordUniversal(main), {})(new Request('https://localhost:8000'), {});
     assert.deepEqual(memLogger.buf, [{
       level: 'info',
       message: ['Hello, world'],
       inv: {
-        functionName: '/test-package/test-my-action-name/1.2.3',
-        invocationId: 'test-my-activation-id',
-        requestId: 'test-request-id',
-        transactionId: 'test-transaction-id',
+        functionName: '/undefined/undefined/undefined',
+        invocationId: 'n/a',
+        requestId: 'n/a',
+        transactionId: 'n/a',
       },
       timestamp: '1970-01-01T00:00:00.000Z',
     }]);
@@ -172,8 +198,7 @@ describe('Loggers', () => {
       };
     }
 
-    myRootLogger.loggers.set('mylogger', memLogger);
-    const result = await logger(logger.trace(main), { logger: myRootLogger, level: 'trace' })({}, {
+    const result = await logger(recordDefault(logger.trace(main)), { level: 'trace' })(new Request('http://localhost:8000'), {
       ...DEFAULT_CONTEXT,
       env: {
         path: '/foo',
@@ -213,15 +238,15 @@ describe('Loggers', () => {
       };
     }
 
-    logger.init({}, myRootLogger);
-    myRootLogger.loggers.get('UniversalLogger').loggers.set('mylogger', memLogger);
+    const action = wrap(main)
+      .with(logger.trace)
+      .with(recordUniversal)
+      .with(logger, {
+        fields: { foo: 'bar' },
+        level: 'trace',
+      });
 
-    const action = wrap(main).with(logger.trace).with(logger, {
-      fields: { foo: 'bar' },
-      logger: myRootLogger,
-      level: 'trace',
-    });
-    const result = await action({}, {
+    const result = await action(new Request('https://localhost:8000'), {
       ...DEFAULT_CONTEXT,
       env: {
         path: '/foo',
@@ -278,15 +303,14 @@ describe('Loggers', () => {
       throw new Error('ωario is bad!');
     }
 
-    logger.init({}, myRootLogger);
-    myRootLogger.loggers.get('UniversalLogger').loggers.set('mylogger', memLogger);
-
-    const action = wrap(main).with(logger.trace).with(logger, {
-      fields: { foo: 'bar' },
-      logger: myRootLogger,
-      level: 'trace',
-    });
-    const result = await action({}, {
+    const action = wrap(main)
+      .with(logger.trace)
+      .with(recordUniversal)
+      .with(logger, {
+        fields: { foo: 'bar' },
+        level: 'trace',
+      });
+    const result = await action(new Request('http://localhost:8000'), {
       ...DEFAULT_CONTEXT,
       env: {
         path: '/foo',
@@ -339,7 +363,19 @@ describe('Loggers', () => {
     }
 
     const action = wrap(main).with(logger.trace);
-    const result = await action({}, DEFAULT_CONTEXT);
+    const result = await action({}, { ...DEFAULT_CONTEXT });
+    assert.deepEqual(result, { body: 'ok' });
+  });
+
+  it('trace works with console', async () => {
+    async function main() {
+      return {
+        body: 'ok',
+      };
+    }
+
+    const action = wrap(main).with(logger.trace);
+    const result = await action({}, { log: console });
     assert.deepEqual(result, { body: 'ok' });
   });
 
@@ -361,15 +397,10 @@ describe('Loggers', () => {
   });
 
   it('creates coralogix logger if needed', async () => {
-    const log = logger.init({
-      ...DEFAULT_CONTEXT,
-      env: {
-        CORALOGIX_API_KEY: '1234',
-        CORALOGIX_APPLICATION_NAME: 'logger-test',
-        CORALOGIX_SUBSYSTEM_NAME: 'test-1',
-        CORALOGIX_LOG_LEVEL: 'info',
-      },
-    }, myRootLogger);
+    const main = (req, context) => {
+      const { log } = context;
+      log.infoFields('Hello, world', { myId: 42 });
+    };
 
     const reqs = [];
     const scope = nock('https://api.coralogix.com')
@@ -379,9 +410,20 @@ describe('Loggers', () => {
         return [200, 'ok'];
       });
 
-    logger(() => {
-      log.infoFields('Hello, world', { myId: 42 });
-    })({}, { ...DEFAULT_CONTEXT });
+    await logger(recordUniversal(main), {})(new Request('https://localhost:8000', {
+      headers: {
+        'x-cdn-url': 'https://www.adobe.com',
+      },
+    }), {
+      ...DEFAULT_CONTEXT,
+      env: {
+        CORALOGIX_API_KEY: '1234',
+        CORALOGIX_APPLICATION_NAME: 'logger-test',
+        CORALOGIX_SUBSYSTEM_NAME: 'test-1',
+        CORALOGIX_LOG_LEVEL: 'info',
+      },
+    });
+
     // nock 13.0 needs a tick to reply to a request
     // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
     await new Promise((resolve) => setImmediate(resolve));
@@ -399,6 +441,9 @@ describe('Loggers', () => {
       level: 'info',
       message: 'Hello, world',
       myId: 42,
+      cdn: {
+        url: 'https://www.adobe.com',
+      },
       inv: {
         functionName: '/test-package/test-my-action-name/1.2.3',
         invocationId: 'test-my-activation-id',
@@ -408,31 +453,121 @@ describe('Loggers', () => {
     });
   });
 
-  it('logging adds cdn.url field', () => {
-    const log = logger.init({}, myRootLogger);
-    myRootLogger.loggers.get('UniversalLogger').loggers.set('mylogger', memLogger);
+  it('coralogix uses context func', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.infoFields('Hello, world', { myId: 42 });
+    };
 
-    logger(() => {
-      log.info('Hello, world');
-    })(new Request('https://www.example.com/', {
+    const reqs = [];
+    const scope = nock('https://api.coralogix.com')
+      .post('/api/v1/logs')
+      .reply((uri, requestBody) => {
+        reqs.push(requestBody);
+        return [200, 'ok'];
+      });
+
+    await logger(recordUniversal(main), {})(new Request('https://localhost:8000', {
       headers: {
-        'x-cdn-url': 'https://www.domain.com/index.html?q=abc',
+        'x-cdn-url': 'https://www.adobe.com',
       },
-    }), { ...DEFAULT_CONTEXT });
+    }), {
+      ...DEFAULT_CONTEXT,
+      env: {
+        CORALOGIX_API_KEY: '1234',
+      },
+    });
 
-    assert.deepEqual(memLogger.buf, [{
-      level: 'info',
-      message: ['Hello, world'],
-      inv: {
-        functionName: '/test-package/test-my-action-name/1.2.3',
-        invocationId: 'test-my-activation-id',
-        requestId: 'test-request-id',
-        transactionId: 'test-transaction-id',
+    // nock 13.0 needs a tick to reply to a request
+    // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
+    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => setImmediate(resolve));
+    await scope.done();
+    assert.equal(reqs.length, 1);
+    assert.equal(reqs[0].applicationName, 'helix');
+    assert.equal(reqs[0].subsystemName, 'test-package');
+    assert.equal(reqs[0].privateKey, '1234');
+    assert.equal(reqs[0].logEntries.length, 1);
+  });
+
+  it('coralogix falls back to n/a', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.infoFields('Hello, world', { myId: 42 });
+    };
+
+    const reqs = [];
+    const scope = nock('https://api.coralogix.com')
+      .post('/api/v1/logs')
+      .reply((uri, requestBody) => {
+        reqs.push(requestBody);
+        return [200, 'ok'];
+      });
+
+    await logger(recordUniversal(main), {})(new Request('https://localhost:8000', {
+      headers: {
+        'x-cdn-url': 'https://www.adobe.com',
       },
-      cdn: {
-        url: 'https://www.domain.com/index.html?q=abc',
+    }), {
+      env: {
+        CORALOGIX_API_KEY: '1234',
       },
-      timestamp: '1970-01-01T00:00:00.000Z',
-    }]);
+    });
+
+    // nock 13.0 needs a tick to reply to a request
+    // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
+    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => setImmediate(resolve));
+    await scope.done();
+    assert.equal(reqs.length, 1);
+    assert.equal(reqs[0].applicationName, 'n/a');
+    assert.equal(reqs[0].subsystemName, 'n/a');
+    assert.equal(reqs[0].privateKey, '1234');
+    assert.equal(reqs[0].logEntries.length, 1);
+  });
+
+  it('coralogix is cached', async () => {
+    const main = (req, context) => {
+      const { log } = context;
+      log.infoFields('Hello, world', { myId: 42 });
+    };
+
+    const reqs = [];
+    const scope = nock('https://api.coralogix.com')
+      .post('/api/v1/logs')
+      .times(2)
+      .reply((uri, requestBody) => {
+        reqs.push(requestBody);
+        return [200, 'ok'];
+      });
+
+    await logger(recordUniversal(main), {})(new Request('https://localhost:8000', {
+      headers: {
+        'x-cdn-url': 'https://www.adobe.com',
+      },
+    }), {
+      env: {
+        CORALOGIX_API_KEY: '1234',
+      },
+    });
+    await logger(recordUniversal(main), {})(new Request('https://localhost:8000', {
+      headers: {
+        'x-cdn-url': 'https://www.adobe.com',
+      },
+    }), {
+      env: {
+        CORALOGIX_API_KEY: '1234',
+        CORALOGIX_APPLICATION_NAME: 'logger-test',
+      },
+    });
+
+    // nock 13.0 needs a tick to reply to a request
+    // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
+    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => setImmediate(resolve));
+    await scope.done();
+    assert.equal(reqs.length, 2);
+    assert.equal(reqs[0].applicationName, 'n/a');
+    assert.equal(reqs[1].applicationName, 'n/a');
   });
 });

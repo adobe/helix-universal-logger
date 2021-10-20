@@ -4,9 +4,9 @@
   "description": "Helix Universal Logger",
   "main": "src/index.js",
   "scripts": {
-    "test": " nyc --reporter=text --reporter=lcov --check-coverage --branches 80 --statements 98 --lines 100 mocha",
-    "test-ci": "nyc --reporter=text --reporter=lcov --check-coverage --branches 80 --statements 98 --lines 100 mocha --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
-    "lint": "./node_modules/.bin/eslint .",
+    "test": " nyc mocha",
+    "test-ci": "nyc mocha --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
+    "lint": "eslint .",
     "semantic-release": "semantic-release",
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
     "commit": "git-cz"
@@ -55,7 +55,6 @@
   },
   "dependencies": {
     "@adobe/helix-fetch": "3.0.0",
-    "@adobe/helix-log": "5.0.5",
-    "cls-hooked": "4.2.2"
+    "@adobe/helix-log": "5.0.5"
   }
 }

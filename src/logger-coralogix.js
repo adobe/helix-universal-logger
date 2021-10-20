@@ -27,8 +27,8 @@ function createCoralogixLogger(env, context) {
   }
   if (!coralogixLogger) {
     // we use the openwhisk package name as subsystem
-    const applicationName = CORALOGIX_APPLICATION_NAME || context.func.app || 'n/a';
-    const subsystemName = CORALOGIX_SUBSYSTEM_NAME || context.func.package || 'n/a';
+    const applicationName = CORALOGIX_APPLICATION_NAME || context.func?.app || 'n/a';
+    const subsystemName = CORALOGIX_SUBSYSTEM_NAME || context.func?.package || 'n/a';
     // eslint-disable-next-line no-console
     console.log(`configured coralogix logger with: ${applicationName} / ${subsystemName}`);
     coralogixLogger = new CoralogixLogger(CORALOGIX_API_KEY, applicationName, subsystemName, {
@@ -37,5 +37,10 @@ function createCoralogixLogger(env, context) {
   }
   return coralogixLogger;
 }
+
+// used for testing
+createCoralogixLogger.reset = () => {
+  coralogixLogger = null;
+};
 
 module.exports = createCoralogixLogger;
