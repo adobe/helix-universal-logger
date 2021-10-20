@@ -10,18 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { MultiLogger, SimpleInterface } from '@adobe/helix-log';
-
-/**
- * Fetch Request
- */
-export declare class Request {}
-
-/**
- * Fetch Response
- */
-export declare class Response {}
-
+import { Request, Response } from '@adobe/helix-fetch';
 
 /**
  * Logger object exposed through context
@@ -37,7 +26,7 @@ interface Logger {
   trace: (...msg: any[]) => void;
   silly: (...msg: any[]) => void;
 }
- 
+
 /**
  * Universal context extension
  */
@@ -57,12 +46,7 @@ export declare type UniversalFunction = (req: Request, context: UniversalContext
 declare interface WrapOptions {
 
   /**
-   * Helix multi logger. defaults to the helix `rootLogger`.
-   */
-  logger?: MultiLogger,
-
-  /**
-   * Additional fields to log with the `ow` logging fields.
+   * Additional fields to log with the `inv` logging fields.
    */
   fields?: object,
 
@@ -101,21 +85,6 @@ declare interface WrapOptions {
 export declare function wrap(fn: UniversalFunction, opts: WrapOptions): UniversalFunction;
 
 export declare namespace logger {
-  /**
-   * Initializes helix-log that adds additional activation related fields to the loggers.
-   * It also looks for credential params and tries to add additional external logger
-   * (eg. coralogix).
-   *
-   * It also initializes `context.log` with a SimpleInterface if not already present.
-   *
-   * @param {UniversalContext} context - universal function context
-   * @param {MultiLogger} [logger=rootLogger] - a helix multi logger. defaults to the helix
-   *                                            `rootLogger`.
-   * @param {string} [level] - Overall log-level. defaults to `params.LOG_LEVEL` or 'info`.
-   * @return {SimpleInterface} the helix-log simple interface
-   */
-  export function init(context: UniversalContext, logger: MultiLogger, level?: string): SimpleInterface;
-
   /**
    * Creates a tracer function that logs invocation details on `trace` level before and after the
    * actual action invocation.

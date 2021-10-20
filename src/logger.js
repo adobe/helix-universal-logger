@@ -37,20 +37,14 @@
 
 const http = require('http');
 const {
-  rootLogger, JsonifyForLog, MultiLogger, SimpleInterface, messageFormatSimple, ConsoleLogger,
+  JsonifyForLog, MultiLogger, SimpleInterface, messageFormatSimple, ConsoleLogger,
 } = require('@adobe/helix-log');
 const { Response } = require('@adobe/helix-fetch');
-const { createNamespace } = require('cls-hooked');
 
 const createCoralogixLogger = require('./logger-coralogix');
 
-const CLS_NAMESPACE_NAME = 'uni-util-logger';
-const LOGGER_INVOCATION_FIELDS_NAME = 'uni-fields';
-const LOGGER_CDN_FIELDS_NAME = 'cdn-fields';
-
-const CLS_NAMESPACE = createNamespace(CLS_NAMESPACE_NAME);
-
 // define special 'serializers' for express request
+/* istanbul ignore next */
 JsonifyForLog.impl(http.IncomingMessage, (req) => ({
   method: req.method,
   url: req.url,
@@ -58,6 +52,7 @@ JsonifyForLog.impl(http.IncomingMessage, (req) => ({
 }));
 
 // define special 'serializers' for express response
+/* istanbul ignore next */
 JsonifyForLog.impl(http.ServerResponse, (res) => {
   /* istanbul ignore next */
   if (!res || !res.statusCode) {
@@ -72,70 +67,66 @@ JsonifyForLog.impl(http.ServerResponse, (res) => {
 });
 
 /**
- * Special logger for universal functions that adds the invocation id, function name and
- * transaction id to each log message.
- * @private
- */
-class UniversalLogger extends MultiLogger {
-  constructor(logger, opts) {
-    super(logger, {
-      ...opts,
-      filter: (fields) => {
-        const ret = {
-          ...fields,
-        };
-
-        const inv = CLS_NAMESPACE.get(LOGGER_INVOCATION_FIELDS_NAME);
-        if (inv) {
-          ret.inv = inv;
-        }
-
-        const cdn = CLS_NAMESPACE.get(LOGGER_CDN_FIELDS_NAME);
-        if (cdn) {
-          ret.cdn = cdn;
-        }
-
-        return ret;
-      },
-    });
-  }
-}
-
-/**
  * Initializes helix-log that adds additional activation related fields to the loggers.
  * It also looks for credential params and tries to add additional external logger
  * (eg. coralogix).
  *
  * It also initializes `context.log` with a SimpleInterface if not already present.
  *
+ * @param {Request} request - universal request
  * @param {UniversalContext} context - universal function context
- * @param {MultiLogger} [logger=rootLogger] - a helix multi logger. defaults to the helix
- *                                            `rootLogger`.
- * @param {string} [level] - Overall log-level. defaults to `params.LOG_LEVEL` or 'info`.
+ * @param {string} [opts.level] - Overall log-level. defaults to `params.LOG_LEVEL` or 'info`.
+ * @param {object} [opts.fields] - optional constant fields to add to the `inv` field.
  * @return {SimpleInterface} the helix-log simple interface
  */
-function init(context, logger = rootLogger, level) {
-  const { env = {} } = context;
+function init(request, context, opts = {}) {
+  const { level, fields = {} } = opts;
+  const {
+    env = {},
+    invocation: {
+      id, transactionId, requestId,
+    } = {},
+    func: {
+      package: packageName,
+      name,
+      version,
+    } = {},
+  } = context;
 
-  // add universal logger to helix-log logger
-  if (!logger.loggers.has('UniversalLogger')) {
-    const uniLogger = new UniversalLogger({});
-    logger.loggers.set('UniversalLogger', uniLogger);
+  // compute fields
+  const defaultFields = {
+    inv: {
+      invocationId: id || 'n/a',
+      functionName: `/${packageName}/${name}/${version}`,
+      transactionId: transactionId || 'n/a',
+      requestId: requestId || 'n/a',
+      ...fields,
+    },
+  };
 
-    // add coralogix logger
-    const coralogix = createCoralogixLogger(env, context);
-    if (coralogix) {
-      uniLogger.loggers.set('CoralogixLogger', coralogix);
-    }
+  if (request.headers.has('x-cdn-url')) {
+    defaultFields.cdn = {
+      url: request.headers.get('x-cdn-url'),
+    };
   }
 
-  // ensure console logger is setup correctly
-  if (logger === rootLogger) {
-    logger.loggers.set('default', new ConsoleLogger({
+  const uniLogger = new MultiLogger({}, {
+    defaultFields,
+  });
+
+  // add coralogix logger
+  const coralogix = createCoralogixLogger(env, context);
+  if (coralogix) {
+    uniLogger.loggers.set('CoralogixLogger', coralogix);
+  }
+
+  const logger = new MultiLogger({
+    default: new ConsoleLogger({
       formatter: messageFormatSimple,
       level: 'trace',
-    }));
-  }
+    }),
+    UniversalLogger: uniLogger,
+  }, { level });
 
   // create SimpleInterface if needed
   let simple = context.log;
@@ -149,59 +140,10 @@ function init(context, logger = rootLogger, level) {
       simple[n] = simple[n].bind(simple);
     });
     context.log = simple;
+  } else {
+    simple.logger = logger;
   }
   return simple;
-}
-
-/**
- * Takes an universal function and initializes logging, by invoking {@link init}.
- *
- * @param {UniversalFunction} fn original universal main function
- * @param {object} opts Additional wrapping options
- * @param {object} [opts.fields] - Additional fields to log with the `ow` logging fields.
- * @param {MultiLogger} [opts.logger=rootLogger] - a helix multi logger. defaults to the helix
- *                                                `rootLogger`.
- * @param {string} [opts.level] - Overall log-level. defaults to `params.LOG_LEVEL` or 'info`.
- * @param {Request} req function request,
- * @param {UniversalContext} context universal function context
- *
- * @private
- * @returns {*} the return value of the action
- */
-async function instrumentAndRun(fn, opts, req, context) {
-  const {
-    logger = rootLogger,
-    fields = {},
-    level,
-  } = opts || {};
-
-  const {
-    id, transactionId, requestId,
-  } = context.invocation || {};
-
-  const {
-    package: packageName,
-    name,
-    version,
-  } = context.func || {};
-
-  return CLS_NAMESPACE.runAndReturn(async () => {
-    CLS_NAMESPACE.set(LOGGER_INVOCATION_FIELDS_NAME, {
-      invocationId: id || 'n/a',
-      functionName: `/${packageName}/${name}/${version}`,
-      transactionId: transactionId || 'n/a',
-      requestId: requestId || 'n/a',
-      ...fields,
-    });
-
-    if (req && req.headers && req.headers.has('x-cdn-url')) {
-      CLS_NAMESPACE.set(LOGGER_CDN_FIELDS_NAME, {
-        url: req.headers.get('x-cdn-url'),
-      });
-    }
-    init(context, logger, level);
-    return fn(req, context);
-  });
 }
 
 /**
@@ -304,10 +246,12 @@ function trace(fn) {
  * @returns {function(...[*]): *} a the wrapped function.
  */
 function wrap(fn, opts) {
-  return (...args) => instrumentAndRun(fn, opts, ...args);
+  return (req, context) => {
+    init(req, context, opts);
+    return fn(req, context);
+  };
 }
 
 module.exports = Object.assign(wrap, {
-  init,
   trace,
 });
