@@ -1,3 +1,16 @@
+# [2.0.0](https://github.com/adobe/helix-universal-logger/compare/v1.1.1...v2.0.0) (2021-10-20)
+
+
+### Bug Fixes
+
+* Remove cls hooked ([#60](https://github.com/adobe/helix-universal-logger/issues/60)) ([fdc93fe](https://github.com/adobe/helix-universal-logger/commit/fdc93fe2ddbd9f092d59edc938fa21e0fc75cd4c))
+
+
+### BREAKING CHANGES
+
+* passing a helix logger is no longer supported.
+- logger.init() was removed
+
 ## [1.1.1](https://github.com/adobe/helix-universal-logger/compare/v1.1.0...v1.1.1) (2021-10-18)
 
 
