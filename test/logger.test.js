@@ -426,8 +426,12 @@ describe('Loggers', () => {
 
     // nock 13.0 needs a tick to reply to a request
     // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
-    await new Promise((resolve) => setImmediate(resolve));
-    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
     await scope.done();
     assert.equal(reqs.length, 1);
     assert.equal(reqs[0].applicationName, 'logger-test');
@@ -480,8 +484,12 @@ describe('Loggers', () => {
 
     // nock 13.0 needs a tick to reply to a request
     // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
-    await new Promise((resolve) => setImmediate(resolve));
-    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
     await scope.done();
     assert.equal(reqs.length, 1);
     assert.equal(reqs[0].applicationName, 'helix');
@@ -516,8 +524,12 @@ describe('Loggers', () => {
 
     // nock 13.0 needs a tick to reply to a request
     // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
-    await new Promise((resolve) => setImmediate(resolve));
-    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
     await scope.done();
     assert.equal(reqs.length, 1);
     assert.equal(reqs[0].applicationName, 'n/a');
@@ -563,8 +575,12 @@ describe('Loggers', () => {
 
     // nock 13.0 needs a tick to reply to a request
     // see https://github.com/nock/nock/blob/75507727cf09a0b7bf0aa7ebdf3621952921b82e/migration_guides/migrating_to_13.md
-    await new Promise((resolve) => setImmediate(resolve));
-    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
     await scope.done();
     assert.equal(reqs.length, 2);
     assert.equal(reqs[0].applicationName, 'n/a');
