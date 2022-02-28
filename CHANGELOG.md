@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/adobe/helix-universal-logger/compare/v2.0.3...v2.0.4) (2022-02-28)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([#92](https://github.com/adobe/helix-universal-logger/issues/92)) ([b8d0d87](https://github.com/adobe/helix-universal-logger/commit/b8d0d875a8f71b34318fc853ad7be629269bbdc6))
+
 ## [2.0.3](https://github.com/adobe/helix-universal-logger/compare/v2.0.2...v2.0.3) (2022-02-14)
 
 
