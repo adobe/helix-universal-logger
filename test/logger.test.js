@@ -17,7 +17,7 @@ const assert = require('assert');
 const nock = require('nock');
 const { SimpleInterface, MemLogger } = require('@adobe/helix-log');
 const wrap = require('@adobe/helix-shared-wrap');
-const { Request } = require('@adobe/helix-fetch');
+const { Request } = require('@adobe/fetch');
 const logger = require('../src/logger.js');
 const coralogix = require('../src/logger-coralogix.js');
 

@@ -39,7 +39,7 @@ const http = require('http');
 const {
   JsonifyForLog, MultiLogger, SimpleInterface, messageFormatSimple, ConsoleLogger,
 } = require('@adobe/helix-log');
-const { Response } = require('@adobe/helix-fetch');
+const { Response } = require('@adobe/fetch');
 
 const createCoralogixLogger = require('./logger-coralogix');
 
