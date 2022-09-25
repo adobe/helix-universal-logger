@@ -1,3 +1,10 @@
+## [2.0.13](https://github.com/adobe/helix-universal-logger/compare/v2.0.12...v2.0.13) (2022-09-25)
+
+
+### Bug Fixes
+
+* @adobe/helix-fetch -> @adobe/fetch ([#130](https://github.com/adobe/helix-universal-logger/issues/130)) ([e725a12](https://github.com/adobe/helix-universal-logger/commit/e725a122203ada802ac9babd50a7c3e52e20cd1a))
+
 ## [2.0.12](https://github.com/adobe/helix-universal-logger/compare/v2.0.11...v2.0.12) (2022-08-07)
 
 
