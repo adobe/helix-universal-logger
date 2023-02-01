@@ -34,17 +34,20 @@
  *
  * @module logger
  */
+import http from 'http';
+import {
+  ConsoleLogger,
+  JsonifyForLog,
+  messageFormatSimple,
+  MultiLogger,
+  SimpleInterface,
+} from '@adobe/helix-log';
+import { Response } from '@adobe/fetch';
 
-const http = require('http');
-const {
-  JsonifyForLog, MultiLogger, SimpleInterface, messageFormatSimple, ConsoleLogger,
-} = require('@adobe/helix-log');
-const { Response } = require('@adobe/fetch');
-
-const createCoralogixLogger = require('./logger-coralogix');
+import createCoralogixLogger from './logger-coralogix.js';
 
 // define special 'serializers' for express request
-/* istanbul ignore next */
+/* c8 ignore next 5 */
 JsonifyForLog.impl(http.IncomingMessage, (req) => ({
   method: req.method,
   url: req.url,
@@ -52,13 +55,11 @@ JsonifyForLog.impl(http.IncomingMessage, (req) => ({
 }));
 
 // define special 'serializers' for express response
-/* istanbul ignore next */
+/* c8 ignore next 10 */
 JsonifyForLog.impl(http.ServerResponse, (res) => {
-  /* istanbul ignore next */
   if (!res || !res.statusCode) {
     return res;
   }
-  /* istanbul ignore next */
   return {
     statusCode: res.statusCode,
     duration: res.duration,
@@ -252,6 +253,6 @@ function wrap(fn, opts) {
   };
 }
 
-module.exports = Object.assign(wrap, {
+export default Object.assign(wrap, {
   trace,
 });
