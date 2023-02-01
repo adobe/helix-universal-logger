@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/adobe/helix-universal-logger/compare/v3.0.0...v3.0.1) (2023-02-01)
+
+
+### Bug Fixes
+
+* fix export ([e0b8f03](https://github.com/adobe/helix-universal-logger/commit/e0b8f036328d6d9fe76e094029bd4f02651127be))
+
 # [3.0.0](https://github.com/adobe/helix-universal-logger/compare/v2.0.18...v3.0.0) (2023-02-01)
 
 
