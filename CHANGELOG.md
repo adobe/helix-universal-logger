@@ -1,3 +1,18 @@
+# [3.0.0](https://github.com/adobe/helix-universal-logger/compare/v2.0.18...v3.0.0) (2023-02-01)
+
+
+### Bug Fixes
+
+* convert to ESM ([#151](https://github.com/adobe/helix-universal-logger/issues/151)) ([56c6769](https://github.com/adobe/helix-universal-logger/commit/56c6769f123f7dae7c085deb8f0b0ed2aabfd3b3))
+
+
+### BREAKING CHANGES
+
+* requires ESM
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Tobias Bocanegra <tripod@adobe.com>
+
 ## [2.0.18](https://github.com/adobe/helix-universal-logger/compare/v2.0.17...v2.0.18) (2023-01-28)
 
 
