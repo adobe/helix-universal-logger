@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const logger = require('./logger.js');
+import logger from './logger.js';
 
 module.exports = {
   logger,

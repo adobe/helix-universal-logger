@@ -13,13 +13,15 @@
 /* eslint-env mocha */
 /* eslint-disable no-underscore-dangle,camelcase */
 
-const assert = require('assert');
-const nock = require('nock');
-const { SimpleInterface, MemLogger } = require('@adobe/helix-log');
-const wrap = require('@adobe/helix-shared-wrap');
-const { Request } = require('@adobe/fetch');
-const logger = require('../src/logger.js');
-const coralogix = require('../src/logger-coralogix.js');
+import assert from 'assert';
+import nock from 'nock';
+import { MemLogger, SimpleInterface } from '@adobe/helix-log';
+
+import wrap from '@adobe/helix-shared-wrap';
+import { Request } from '@adobe/fetch';
+
+import logger from '../src/logger.js';
+import coralogix from '../src/logger-coralogix.js';
 
 const DEFAULT_CONTEXT = {
   env: {},

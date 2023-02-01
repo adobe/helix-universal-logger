@@ -11,11 +11,11 @@
  */
 
 /* eslint-disable no-underscore-dangle */
-const { CoralogixLogger } = require('@adobe/helix-log');
+import { CoralogixLogger } from '@adobe/helix-log';
 
 let coralogixLogger = null;
 
-function createCoralogixLogger(env, context) {
+export default function createCoralogixLogger(env, context) {
   const {
     CORALOGIX_API_KEY,
     CORALOGIX_APPLICATION_NAME,
@@ -42,5 +42,3 @@ function createCoralogixLogger(env, context) {
 createCoralogixLogger.reset = () => {
   coralogixLogger = null;
 };
-
-module.exports = createCoralogixLogger;
