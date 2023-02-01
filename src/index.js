@@ -10,8 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-import logger from './logger.js';
-
-module.exports = {
-  logger,
-};
+export { default as logger } from './logger.js';
