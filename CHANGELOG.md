@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/adobe/helix-universal-logger/compare/v3.0.2...v3.0.3) (2023-02-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v4.0.3 ([#157](https://github.com/adobe/helix-universal-logger/issues/157)) ([304075c](https://github.com/adobe/helix-universal-logger/commit/304075c61641628ada3478d927d62ee02d4fc890))
+
 ## [3.0.2](https://github.com/adobe/helix-universal-logger/compare/v3.0.1...v3.0.2) (2023-02-13)
 
 
