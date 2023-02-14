@@ -44,7 +44,7 @@
     "*.js": "eslint"
   },
   "dependencies": {
-    "@adobe/fetch": "4.0.2",
+    "@adobe/fetch": "4.0.3",
     "@adobe/helix-log": "6.0.0"
   }
 }
