@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-universal-logger",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "description": "Helix Universal Logger",
   "main": "src/index.js",
   "type": "module",
