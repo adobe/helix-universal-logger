@@ -1,3 +1,10 @@
+## [3.0.14](https://github.com/adobe/helix-universal-logger/compare/v3.0.13...v3.0.14) (2024-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([#235](https://github.com/adobe/helix-universal-logger/issues/235)) ([255db7a](https://github.com/adobe/helix-universal-logger/commit/255db7a796abbc1a50a7a6947a5caaab1d09a7f9))
+
 ## [3.0.13](https://github.com/adobe/helix-universal-logger/compare/v3.0.12...v3.0.13) (2023-10-30)
 
 
