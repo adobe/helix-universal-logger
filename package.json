@@ -46,6 +46,6 @@
   },
   "dependencies": {
     "@adobe/fetch": "4.1.2",
-    "@adobe/helix-log": "6.0.2"
+    "@adobe/helix-log": "6.0.3"
   }
 }
