@@ -1,3 +1,10 @@
+## [3.0.19](https://github.com/adobe/helix-universal-logger/compare/v3.0.18...v3.0.19) (2024-09-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v6.0.4 ([#266](https://github.com/adobe/helix-universal-logger/issues/266)) ([d123f8c](https://github.com/adobe/helix-universal-logger/commit/d123f8c832460c2c139405b810d15b4f86f18eeb))
+
 ## [3.0.18](https://github.com/adobe/helix-universal-logger/compare/v3.0.17...v3.0.18) (2024-06-07)
 
 
