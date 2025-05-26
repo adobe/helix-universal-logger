@@ -11,7 +11,7 @@
     "semantic-release": "semantic-release",
     "semantic-release-dry": "semantic-release --dry-run --branches $CI_BRANCH",
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,6 @@
     "codecov": "3.8.3",
     "eslint": "8.57.1",
     "husky": "9.1.7",
-    "jsdoc-to-markdown": "9.1.1",
     "junit-report-builder": "5.1.1",
     "lint-staged": "16.0.0",
     "mocha": "11.4.0",
@@ -45,7 +44,7 @@
     "*.js": "eslint"
   },
   "dependencies": {
-    "@adobe/fetch": "4.2.1",
+    "@adobe/fetch": "4.2.2",
     "@adobe/helix-log": "6.0.5"
   }
 }
