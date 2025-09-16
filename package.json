@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/adobe/helix-universal-logger#readme",
   "devDependencies": {
-    "@adobe/eslint-config-helix": "3.0.9",
+    "@adobe/eslint-config-helix": "3.0.10",
     "@adobe/helix-shared-wrap": "2.0.2",
     "@eslint/config-helpers": "0.3.1",
     "@semantic-release/changelog": "6.0.3",
@@ -45,7 +45,7 @@
     "*.js": "eslint"
   },
   "dependencies": {
-    "@adobe/fetch": "4.2.2",
+    "@adobe/fetch": "4.2.3",
     "@adobe/helix-log": "6.0.6"
   }
 }
