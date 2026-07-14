@@ -38,7 +38,7 @@
     "junit-report-builder": "5.1.2",
     "lint-staged": "17.0.8",
     "mocha": "11.7.6",
-    "nock": "14.0.15",
+    "nock": "14.0.16",
     "semantic-release": "25.0.5"
   },
   "lint-staged": {
