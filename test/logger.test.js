@@ -407,8 +407,8 @@ describe('Loggers', () => {
     const reqs = [];
     const scope = nock('https://api.coralogix.com')
       .post('/api/v1/logs')
-      .reply((uri, requestBody) => {
-        reqs.push(requestBody);
+      .reply(async (request) => {
+        reqs.push(await request.json());
         return [200, 'ok'];
       });
 
@@ -468,8 +468,8 @@ describe('Loggers', () => {
     const reqs = [];
     const scope = nock('https://api.coralogix.com')
       .post('/api/v1/logs')
-      .reply((uri, requestBody) => {
-        reqs.push(requestBody);
+      .reply(async (request) => {
+        reqs.push(await request.json());
         return [200, 'ok'];
       });
 
@@ -509,8 +509,8 @@ describe('Loggers', () => {
     const reqs = [];
     const scope = nock('https://api.coralogix.com')
       .post('/api/v1/logs')
-      .reply((uri, requestBody) => {
-        reqs.push(requestBody);
+      .reply(async (request) => {
+        reqs.push(await request.json());
         return [200, 'ok'];
       });
 
@@ -550,8 +550,8 @@ describe('Loggers', () => {
     const scope = nock('https://api.coralogix.com')
       .post('/api/v1/logs')
       .times(2)
-      .reply((uri, requestBody) => {
-        reqs.push(requestBody);
+      .reply(async (request) => {
+        reqs.push(await request.json());
         return [200, 'ok'];
       });
 
